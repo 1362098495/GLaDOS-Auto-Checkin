@@ -3,6 +3,7 @@ import json
 import time
 import random
 import requests
+import re
 from pypushdeer import PushDeer
 
 
@@ -24,10 +25,36 @@ PAYLOAD = {"token": "glados.cloud"}
 TIMEOUT = 10
 
 
-def push(sckey: str, title: str, text: str):
-    if sckey:
-        PushDeer(pushkey=sckey).send_text(title, desp=text)
+def sc_send(sendkey: str, title: str, desp: str = "", options=None, timeout=10):
+  if not sendkey:
+    return None
+  if options is None:
+    options = {}
 
+  # sctp{num}t... -> https://{num}.push.ft07.com/send/{sendkey}.send
+  if sendkey.startswith("sctp"):
+    match = re.match(r"sctp(\d+)t", sendkey)
+    if not match:
+      raise ValueError("Invalid sendkey format for sctp")
+    num = match.group(1)
+    url = f"https://{num}.push.ft07.com/send/{sendkey}.send"
+  else:
+    # 旧版 -> https://sctapi.ftqq.com/{sendkey}.send
+    url = f"https://sctapi.ftqq.com/{sendkey}.send"
+
+  payload = {"title": title, "desp": desp, **options}
+  headers = {"Content-Type": "application/json;charset=utf-8"}
+
+  resp = requests.post(url, json=payload, headers=headers, timeout=timeout)
+  # Server酱一般返回 JSON；这里做个容错
+  try:
+    return resp.json()
+  except Exception:
+    return {"ok": False, "status_code": resp.status_code, "text": resp.text}
+
+
+def sc_send(sendkey: str, title: str, desp: str = "", options=None, timeout=10):
+  return 0
 
 def safe_json(resp):
     try:
@@ -42,20 +69,20 @@ def main():
     cookies = [c.strip() for c in cookies_env.split("&") if c.strip()]
 
     if not cookies:
-        push(sckey, "GLaDOS 签到", "❌ 未检测到 COOKIES")
+        sc_send(sckey, "GLaDOS 签到", "未检测到 COOKIES")
         return
 
     session = requests.Session()
     ok = fail = repeat = 0
     lines = []
+    status = ''
+    email = "unknown"
+    points = "-"
+    days = "-"
 
     for idx, cookie in enumerate(cookies, 1):
         headers = dict(HEADERS_BASE)
         headers["cookie"] = cookie
-
-        email = "unknown"
-        points = "-"
-        days = "-"
 
         try:
             r = session.post(
@@ -72,13 +99,13 @@ def main():
             if "got" in msg_lower:
                 ok += 1
                 points = j.get("points", "-")
-                status = "✅ 成功"
+                status = "签到成功"
             elif "repeat" in msg_lower or "already" in msg_lower:
                 repeat += 1
-                status = "🔁 已签到"
+                status = "已签到"
             else:
                 fail += 1
-                status = "❌ 失败"
+                status = "签到失败"
 
             # 状态接口（允许失败）
             s = session.get(STATUS_URL, headers=headers, timeout=TIMEOUT)
@@ -89,16 +116,17 @@ def main():
 
         except Exception:
             fail += 1
-            status = "❌ 异常"
+            status = "异常"
 
-        lines.append(f"{idx}. {email} | {status} | P:{points} | 剩余:{days}")
+        lines.append(f"{idx}. {email} | {status} | 获得点数:{points} | 剩余:{days}")
         time.sleep(random.uniform(1, 2))
 
-    title = f"GLaDOS 签到完成 ✅{ok} ❌{fail} 🔁{repeat}"
+    title = f"{email} | {status} | 获得点数:{points} | 剩余:{days}"
     content = "\n".join(lines)
 
-    print(content)
-    push(sckey, title, content)
+    # print(title)
+    # print(content)
+    sc_send(sckey, title, content)
 
 
 if __name__ == "__main__":
