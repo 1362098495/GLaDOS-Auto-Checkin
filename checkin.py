@@ -79,6 +79,7 @@ def main():
     email = "unknown"
     points = "-"
     days = "-"
+    title = "-"
 
     for idx, cookie in enumerate(cookies, 1):
         headers = dict(HEADERS_BASE)
@@ -100,12 +101,15 @@ def main():
                 ok += 1
                 points = j.get("points", "-")
                 status = "签到成功"
+                title = f"{email} | P:{points} | D:{days}"
             elif "repeat" in msg_lower or "already" in msg_lower:
                 repeat += 1
                 status = "已签到"
+                title = f"{email} | {status} | D:{days}"
             else:
                 fail += 1
                 status = "签到失败"
+                title = f"{email} | {status} 尽快检查！"
 
             # 状态接口（允许失败）
             s = session.get(STATUS_URL, headers=headers, timeout=TIMEOUT)
@@ -117,11 +121,12 @@ def main():
         except Exception:
             fail += 1
             status = "异常"
+            title = f"{email} | {status} 尽快检查！"
 
         lines.append(f"{idx}. {email} | {status} | 获得点数:{points} | 剩余:{days}")
         time.sleep(random.uniform(1, 2))
 
-    title = f"{email} | {status} | 获得点数:{points} | 剩余:{days}"
+    
     content = "\n".join(lines)
 
     # print(title)
