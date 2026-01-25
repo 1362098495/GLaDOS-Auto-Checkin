@@ -53,8 +53,8 @@ def sc_send(sendkey: str, title: str, desp: str = "", options=None, timeout=10):
     return {"ok": False, "status_code": resp.status_code, "text": resp.text}
 
 
-def sc_send(sendkey: str, title: str, desp: str = "", options=None, timeout=10):
-  return 0
+# def sc_send(sendkey: str, title: str, desp: str = "", options=None, timeout=10):
+#   return 0
 
 def safe_json(resp):
     try:
