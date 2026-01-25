@@ -97,6 +97,13 @@ def main():
             msg = j.get("message", "")
             msg_lower = msg.lower()
 
+            # 状态接口（允许失败）
+            s = session.get(STATUS_URL, headers=headers, timeout=TIMEOUT)
+            sj = safe_json(s).get("data") or {}
+            email = sj.get("email", email)
+            if sj.get("leftDays") is not None:
+                days = f"{int(float(sj['leftDays']))} 天"
+            
             if "got" in msg_lower:
                 ok += 1
                 points = j.get("points", "-")
@@ -110,13 +117,6 @@ def main():
                 fail += 1
                 status = "签到失败"
                 title = f"{email} | {status} 尽快检查！"
-
-            # 状态接口（允许失败）
-            s = session.get(STATUS_URL, headers=headers, timeout=TIMEOUT)
-            sj = safe_json(s).get("data") or {}
-            email = sj.get("email", email)
-            if sj.get("leftDays") is not None:
-                days = f"{int(float(sj['leftDays']))} 天"
 
         except Exception:
             fail += 1
