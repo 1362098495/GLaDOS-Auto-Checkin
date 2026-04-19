@@ -80,6 +80,8 @@ def main():
     points = "-"
     days = "-"
     title = "-"
+    balance = None
+
 
     for idx, cookie in enumerate(cookies, 1):
         headers = dict(HEADERS_BASE)
