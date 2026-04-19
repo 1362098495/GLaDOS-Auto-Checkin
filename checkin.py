@@ -113,7 +113,7 @@ def main():
                 if "list" in j and j["list"]:
                     balance = int(float(j["list"][0].get("balance")))
                 title = f"{email} | P:{points} | B:{balance} | D:{days}"
-            elif "repeat" in msg_lower or "already" in msg_lower:
+            elif "repeat" in msg_lower or "tomorrow" in msg_lower:
                 repeat += 1
                 if "list" in j and j["list"]:
                     points = int(float(j["list"][0].get("points")))
