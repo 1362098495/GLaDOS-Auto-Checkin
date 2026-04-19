@@ -108,11 +108,16 @@ def main():
                 ok += 1
                 points = j.get("points", "-")
                 status = "签到成功"
-                title = f"{email} | P:{points} | D:{days}"
+                if "list" in j and j["list"]:
+                    balance = int(float(j["list"][0].get("balance")))
+                title = f"{email} | P:{points} | B:{balance} | D:{days}"
             elif "repeat" in msg_lower or "already" in msg_lower:
                 repeat += 1
+                if "list" in j and j["list"]:
+                    points = int(float(j["list"][0].get("points")))
+                    balance = int(float(j["list"][0].get("balance")))
                 status = "已签到"
-                title = f"{email} | {status} | D:{days}"
+                title = f"{email} | P:{points} | B:{balance} | D:{days}"
             else:
                 fail += 1
                 status = "签到失败"
@@ -123,14 +128,12 @@ def main():
             status = "异常"
             title = f"{email} | {status} 尽快检查！"
 
-        lines.append(f"{idx}. {email} | {status} | 获得点数:{points} | 剩余:{days}")
+        lines.append(f"{idx}.{email} | {status} | 获得点数:{points} | 总点数:{balance} | 剩余:{days}")
         time.sleep(random.uniform(1, 2))
 
     
     content = "\n".join(lines)
 
-    # print(title)
-    # print(content)
     sc_send(sckey, title, content)
 
 
