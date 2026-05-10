@@ -39,7 +39,7 @@
 
 ### 第二步：获取 GLaDOS Cookie
 
-1. 打开浏览器，登录：https://glados.cloud
+1. 打开浏览器，登录：https://glados.cloud。现在glados已经迁移到https://railgun.info/。
 2. 按 **F12** 打开开发者工具
 3. 找到：
    - Chrome：`Application` → `Cookies`
@@ -67,7 +67,7 @@ koa:sess=xxxxxx; koa:sess.sig=yyyyyy
 
 #### 添加第一个 Secret（必填）
 
-- **Name**：`COOKIES`
+- **Name**：`GLADOS`
 - **Value**：粘贴刚才复制的 Cookie
 
 点击 **Save**
@@ -78,7 +78,7 @@ koa:sess=xxxxxx; koa:sess.sig=yyyyyy
 
 如果你想每天收到签到通知（可选）：
 
-1. 注册 PushDeer：https://www.pushdeer.com
+1. 注册 PushDeer：https://www.pushdeer.com（该版本使用的是sever酱）
 2. 获取你的 `SENDKEY`
 3. 在 GitHub Secrets 中再添加一个：
 
