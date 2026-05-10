@@ -175,7 +175,7 @@ def glados_checkin():
 
     title = f"GLaDOS 签到 | 成功{success_count} 重复{repeat_count} 失败{fail_count}"
     lines = [
-        f"#{r['idx']} {r['email']} | {r['status']} | 获得:{r['points']} | 总积分:{r['balance']} | 剩余:{r['left_days']}"
+        f"#{r['idx']} {r['email']} | {r['status']} | 获得:{r['points']} | 总积分:{r['balance']} | 剩余:{r['left_days']} \n"
         for r in results
     ]
     content = "\n".join(lines)
