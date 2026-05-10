@@ -26,4 +26,4 @@ jobs:
         run: python checkin.py
         env:
           SENDKEY: ${{ secrets.SENDKEY }}
-          COOKIES: ${{ secrets.COOKIES }}
+          GLADOS: ${{ secrets.GLADOS }}
