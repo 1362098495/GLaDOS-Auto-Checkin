@@ -68,7 +68,7 @@ def glados_checkin():
             sc_send(SENDKEY, "GLaDOS 签到", "未检测到 COOKIES")
         return
 
-    cookies_list = [c.strip() for c in GLADOS_COOKIES.split("\n") if c.strip()]
+    cookies_list = [c.strip() for c in GLADOS_COOKIES.split("&") if c.strip()]
 
     results = []           # 收集每个账号的结果
     has_real_error = False # 标记是否有真正失败的账号
